@@ -5,6 +5,7 @@ using DataAccess.Abstract;
 using Entities.Concrete;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Business.Concrete
@@ -12,10 +13,11 @@ namespace Business.Concrete
     public class BrandManager : IBrandService
     {
         IBrandDal _brandDal;
-
-        public BrandManager(IBrandDal brandDal)
+        ICarDal _carDal;
+        public BrandManager(IBrandDal brandDal, ICarDal carDal)
         {
             _brandDal = brandDal;
+            _carDal = carDal;
         }
 
         public IResult Add(Brand brand)
@@ -26,8 +28,17 @@ namespace Business.Concrete
 
         public IResult Delete(Brand brand)
         {
-            _brandDal.Delete(brand);
-            return new SuccessResult(Messages.BrandDeleted);
+            var result = _carDal.GetAll(p => p.BrandId == brand.BrandId);
+            if (result.Any())
+            {
+                return new ErrorResult(Messages.BrandUse);
+            }
+            else
+            {
+                _brandDal.Delete(brand);
+                return new SuccessResult(Messages.BrandDeleted);
+            }
+            
 
         }
 

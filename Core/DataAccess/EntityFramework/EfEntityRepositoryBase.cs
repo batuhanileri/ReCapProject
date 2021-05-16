@@ -21,14 +21,13 @@ namespace Core.DataAccess.EntityFramework
                 context.SaveChanges();
             }
         }
-
         public void Delete(TEntity entity)
         {
             using (TContext context = new TContext())
             {
-                context.Entry(entity).State = EntityState.Deleted;
-                //var deletedEntity = context.Entry(entity);
-                //deletedEntity.State = EntityState.Deleted;
+                //context.Entry(entity).State = EntityState.Deleted;
+                var deletedEntity = context.Entry(entity);
+                deletedEntity.State = EntityState.Deleted;
                 context.SaveChanges();
             }
         }

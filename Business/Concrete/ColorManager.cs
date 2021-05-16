@@ -5,6 +5,7 @@ using DataAccess.Abstract;
 using Entities.Concrete;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Business.Concrete
@@ -12,10 +13,12 @@ namespace Business.Concrete
     public class ColorManager : IColorService
     {
         IColorDal _colorDal;
+        ICarDal _carDal;
 
-        public ColorManager(IColorDal colorDal)
+        public ColorManager(IColorDal colorDal, ICarDal carDal)
         {
             _colorDal = colorDal;
+            _carDal = carDal;
         }
 
         public IResult Add(Color color)
@@ -27,9 +30,16 @@ namespace Business.Concrete
 
         public IResult Delete(Color color)
         {
-            _colorDal.Delete(color);
-            return new SuccessResult(Messages.ColorDeleted);
-
+            var result = _carDal.GetAll(c => c.ColorId == color.ColorId);
+            if (result.Any())
+            {
+                return new ErrorResult(Messages.ColorUse);
+            }
+            else
+            {
+                _colorDal.Delete(color);
+                return new SuccessResult(Messages.ColorDeleted);
+            }
         }
 
         public IDataResult<List<Color>> GetAll()
