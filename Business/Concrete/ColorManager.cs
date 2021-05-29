@@ -2,6 +2,7 @@
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
 using Core.Aspects.Autofac.Validation;
+using Core.Utilities.Business;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
@@ -15,12 +16,12 @@ namespace Business.Concrete
     public class ColorManager : IColorService
     {
         IColorDal _colorDal;
-        ICarDal _carDal;
+        ICarService _carService;
 
-        public ColorManager(IColorDal colorDal, ICarDal carDal)
+        public ColorManager(IColorDal colorDal, ICarService carService)
         {
             _colorDal = colorDal;
-            _carDal = carDal;
+            _carService = carService;
         }
         [ValidationAspect(typeof(ColorValidator))]
         public IResult Add(Color color)
@@ -32,16 +33,21 @@ namespace Business.Concrete
 
         public IResult Delete(Color color)
         {
-            var result = _carDal.GetAll(c => c.ColorId == color.ColorId);
-            if (result.Any())
+            IResult result = BusinessRules.Run(CheckIfColorUseCar(color.ColorId));
+            if (result != null)
             {
-                return new ErrorResult(Messages.ColorUse);
+                return result;
             }
-            else
-            {
-                _colorDal.Delete(color);
+            //var result = _carDal.GetAll(c => c.ColorId == color.ColorId);
+            //if (result.Any())
+            //{
+            //    return new ErrorResult(Messages.ColorUse);
+            //}
+            //else
+            //{
+            _colorDal.Delete(color);
                 return new SuccessResult(Messages.ColorDeleted);
-            }
+            
         }
 
         public IDataResult<List<Color>> GetAll()
@@ -60,6 +66,16 @@ namespace Business.Concrete
         {
             _colorDal.Update(color);
             return new SuccessResult(Messages.ColorUpdated);
+
+        }
+        private IResult CheckIfColorUseCar(int colorId)
+        {
+            var result = _carService.GetAll();
+            if (result.Data.Any(x => x.ColorId == colorId))
+            {
+                return new ErrorResult(Messages.ColorUse);
+            }
+            return new SuccessResult();
 
         }
     }

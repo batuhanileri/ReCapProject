@@ -32,11 +32,19 @@ namespace Business.Constants
         public static string CustomerAdded = "Müşteri Eklendi";
         public static string CustomerDeleted = "Müşteri Silindi";
         public static string CustomerUpdated = "Müşteri Güncellendi";
-        public static string CustomerNot = "Bu kullanıcı bilgisi olmadığı için müşteri olamaz";
+        public static string CustomerNotUser = "Kullanıcı olarak kaydetmeden müşterimiz olamaz.";
 
         public static string UserAdded="Kullanıcı Eklendi";
         public static string UserDeleted="Kullanıcı Silindi";
         public static string UserUpdated="Kullanıcı Güncellendi";
-        public static string UserUse="Kullanıcı müşterimiz olduğu için silinemez";
+        public static string UserUseCannotDeleteTheCustomer="Kullanıcı müşterimiz olduğu için silinemez";
+
+        public static string CarImageAdded="Araba Resmi Eklendi";
+        public static string CarImageDeleted = "Araba Resmi Silindi";
+        public static string CarImageUpdated = "Araba Resmi Güncellendi";
+
+        public static string Failed="5 resimden fazla koyamazsınız";
+        internal static string NotExist="a";
+        internal static string InvalidFileExtension="b";
     }
 }

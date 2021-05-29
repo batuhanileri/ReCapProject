@@ -35,7 +35,7 @@ namespace Business.Concrete
             var result = _customerDal.GetAll(p => p.UserId == user.UserId);
             if (result.Any())
             {
-                return new ErrorResult(Messages.UserUse);
+                return new ErrorResult(Messages.UserUseCannotDeleteTheCustomer);
             }
             else
             {

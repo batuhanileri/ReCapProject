@@ -2,6 +2,7 @@
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
 using Core.Aspects.Autofac.Validation;
+using Core.Utilities.Business;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
@@ -15,11 +16,11 @@ namespace Business.Concrete
     public class BrandManager : IBrandService
     {
         IBrandDal _brandDal;
-        ICarDal _carDal;
-        public BrandManager(IBrandDal brandDal, ICarDal carDal)
+        ICarService _carService;
+        public BrandManager(IBrandDal brandDal, ICarService carService)
         {
             _brandDal = brandDal;
-            _carDal = carDal;
+            _carService = carService;
         }
         [ValidationAspect(typeof(BrandValidator))]
         public IResult Add(Brand brand)
@@ -30,20 +31,20 @@ namespace Business.Concrete
 
         public IResult Delete(Brand brand)
         {
-            var result = _carDal.GetAll(p => p.BrandId == brand.BrandId);
-            if (result.Any())
+            IResult result = BusinessRules.Run(CheckIfBrandUseCar(brand.BrandId));
+            if(result !=null)
             {
-                return new ErrorResult(Messages.BrandUse);
+                return result;
             }
-            else
-            {
+            //var result = _carDal.GetAll(p => p.BrandId == brand.BrandId);
+            //if (result.Any())
+            //{
+            //    return new ErrorResult(Messages.BrandUse);
+            //}
                 _brandDal.Delete(brand);
-                return new SuccessResult(Messages.BrandDeleted);
-            }
-            
-
+                return new SuccessResult(Messages.BrandDeleted);       
+           
         }
-
         public IDataResult<List<Brand>> GetAll()
         {
             return new SuccessDataResult<List<Brand>>(_brandDal.GetAll());
@@ -53,11 +54,22 @@ namespace Business.Concrete
         {
             return new SuccessDataResult<Brand>(_brandDal.GetById(brandId));
         }
+        [ValidationAspect(typeof(BrandValidator))]
 
         public IResult Update(Brand brand)
         {
             _brandDal.Update(brand);
             return new SuccessResult(Messages.BrandUpdated);
+
+        }
+        private IResult CheckIfBrandUseCar(int brandId)
+        {
+            var result = _carService.GetAll();
+            if (result.Data.Any(x=> x.BrandId ==brandId))
+            {
+                return new ErrorResult(Messages.BrandUse);
+            }
+              return new SuccessResult();
 
         }
     }
