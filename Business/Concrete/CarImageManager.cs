@@ -18,7 +18,6 @@ namespace Business.Concrete
     {
         ICarImageDal _carImageDAL;
         IFileHelper _fileHelper;
-
         public CarImageManager(ICarImageDal carImageDAL, IFileHelper fileHelper)
         {
             _carImageDAL = carImageDAL;
@@ -41,6 +40,7 @@ namespace Business.Concrete
                 return new ErrorResult(imageResult.Message);
             }
             carImage.ImagePath = imageResult.Message;
+            carImage.Date = DateTime.Now;
             _carImageDAL.Add(carImage);
             return new SuccessResult(Messages.CarImageAdded);
         }
