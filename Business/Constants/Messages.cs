@@ -1,6 +1,7 @@
 ﻿using Entities.Concrete;
 using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace Business.Constants
@@ -44,7 +45,9 @@ namespace Business.Constants
         public static string CarImageUpdated = "Araba Resmi Güncellendi";
 
         public static string Failed="5 resimden fazla koyamazsınız";
-        internal static string NotExist="a";
-        internal static string InvalidFileExtension="b";
+        public static string NotExist="a";
+        public static string InvalidFileExtension="b";
+
+        public static string AuthorizationDenied="Yetkin yok.";
     }
 }
