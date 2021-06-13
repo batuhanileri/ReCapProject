@@ -22,6 +22,7 @@ namespace Business.Concrete
             _userDal = userDal;
             _customerDal = customerDal;
         }
+        
         [ValidationAspect(typeof(UserValidator))]
 
         public IResult Add(User user)
